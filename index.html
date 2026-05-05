@@ -49,6 +49,7 @@
       color: var(--gold); text-decoration: none;
     }
     .nav-links { display: flex; gap: 36px; list-style: none; }
+    .nav-mobile-cta-item { display: none; }
     .nav-links a {
       font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase;
       color: var(--text-muted); text-decoration: none;
@@ -515,6 +516,27 @@
         font-size: 13px;
         letter-spacing: 0.14em;
       }
+      .nav-mobile-cta-item {
+        display: block;
+        border-bottom: 0;
+        margin-top: 18px;
+      }
+      .nav-mobile-cta-item a {
+        display: inline-flex;
+        width: 100%;
+        align-items: center;
+        justify-content: center;
+        padding: 14px 18px;
+        border: 1px solid var(--gold);
+        color: var(--gold);
+        text-transform: uppercase;
+        letter-spacing: 0.16em;
+        font-size: 10px;
+      }
+      .nav-mobile-cta-item a:hover {
+        background: var(--gold);
+        color: var(--dark);
+      }
 
       .nav-cta { display: none; }
 
@@ -649,6 +671,7 @@
       <li><a href="#specialties">Services</a></li>
       <li><a href="#areas">Areas</a></li>
       <li><a href="#contact">Contact</a></li>
+      <li class="nav-mobile-cta-item"><a href="#contact">Get in Touch</a></li>
     </ul>
     <a href="#contact" class="nav-cta">Get in Touch</a>
     <button type="button" class="nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="nav-menu" aria-label="Open menu">
