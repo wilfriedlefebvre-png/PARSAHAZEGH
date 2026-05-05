@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0D0D0D" />
   <title>Parsa Hazegh | Real Estate Agent – Southern California</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -21,7 +22,7 @@
       --border: rgba(201,168,76,0.2);
     }
 
-    html { scroll-behavior: smooth; }
+    html { scroll-behavior: smooth; color-scheme: dark; }
 
     body {
       font-family: 'DM Sans', sans-serif;
@@ -32,9 +33,13 @@
 
     /* ── NAV ── */
     nav {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
       display: flex; align-items: center; justify-content: space-between;
+      gap: 16px;
       padding: 24px 60px;
+      padding-top: max(24px, env(safe-area-inset-top));
+      padding-left: max(60px, env(safe-area-inset-left));
+      padding-right: max(60px, env(safe-area-inset-right));
       background: linear-gradient(to bottom, rgba(13,13,13,0.95), transparent);
       backdrop-filter: blur(4px);
     }
@@ -57,6 +62,52 @@
       transition: all 0.3s;
     }
     .nav-cta:hover { background: var(--gold); color: var(--dark); }
+
+    .nav-toggle {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      width: 48px;
+      height: 48px;
+      padding: 0;
+      border: 1px solid var(--border);
+      background: rgba(22,22,22,0.9);
+      color: var(--gold);
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .nav-toggle:hover { border-color: var(--gold); }
+    .nav-toggle-bar {
+      display: flex; flex-direction: column; gap: 6px; width: 22px;
+    }
+    .nav-toggle-bar span {
+      display: block; height: 2px; width: 100%;
+      background: currentColor; border-radius: 1px;
+      transition: transform 0.3s ease, opacity 0.2s;
+      transform-origin: center;
+    }
+    body.nav-open .nav-toggle-bar span:nth-child(1) {
+      transform: translateY(8px) rotate(45deg);
+    }
+    body.nav-open .nav-toggle-bar span:nth-child(2) { opacity: 0; }
+    body.nav-open .nav-toggle-bar span:nth-child(3) {
+      transform: translateY(-8px) rotate(-45deg);
+    }
+
+    .nav-backdrop {
+      display: none;
+      position: fixed; inset: 0; z-index: 150;
+      background: rgba(0,0,0,0.55);
+      backdrop-filter: blur(2px);
+      opacity: 0; visibility: hidden;
+      pointer-events: none;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+    body.nav-open .nav-backdrop {
+      opacity: 1; visibility: visible;
+      pointer-events: auto;
+    }
 
     /* ── HERO ── */
     .hero {
@@ -382,39 +433,227 @@
     }
     .fade-in.visible { opacity: 1; transform: translateY(0); }
 
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .fade-in { transition: none; }
+      .fade-in.visible { opacity: 1; transform: none; }
+      .spec-card, .btn-primary, .btn-secondary, .nav-links a { transition: none; }
+      .nav-toggle-bar span { transition: none; }
+      .nav-links { transition: none !important; }
+      .nav-backdrop { transition: none; }
+    }
+
+    /* ── TABLET ── */
+    @media (max-width: 1100px) and (min-width: 901px) {
+      nav { padding-left: 40px; padding-right: 40px; }
+      .hero-left { padding-left: 40px; padding-right: 40px; }
+      .about, .specialties, .areas { padding-left: 40px; padding-right: 40px; }
+      .contact { padding-left: 40px; padding-right: 40px; }
+      footer { padding-left: 40px; padding-right: 40px; }
+    }
+
     /* ── MOBILE ── */
     @media (max-width: 900px) {
-      nav { padding: 20px 24px; }
-      .nav-links { display: none; }
-      .hero { grid-template-columns: 1fr; min-height: auto; }
-      .hero-left { padding: 120px 24px 60px; }
-      .hero-right { height: 360px; }
+      .nav-toggle { display: flex; }
+      .nav-backdrop { display: block; }
+
+      body.nav-open {
+        overflow: hidden;
+        touch-action: none;
+      }
+
+      nav {
+        padding: 16px 20px;
+        padding-top: max(16px, env(safe-area-inset-top));
+        padding-left: max(20px, env(safe-area-inset-left));
+        padding-right: max(20px, env(safe-area-inset-right));
+        flex-wrap: nowrap;
+      }
+      .nav-logo { font-size: clamp(15px, 4vw, 20px); letter-spacing: 0.1em; }
+
+      .nav-links {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0;
+        position: fixed;
+        top: 0; right: 0;
+        width: min(320px, 88vw);
+        height: 100vh;
+        height: 100dvh;
+        max-height: 100%;
+        margin: 0;
+        padding: calc(88px + env(safe-area-inset-top)) 28px 32px;
+        padding-bottom: max(32px, env(safe-area-inset-bottom));
+        background: var(--dark-2);
+        border-left: 1px solid var(--border);
+        list-style: none;
+        z-index: 180;
+        transform: translateX(100%);
+        visibility: hidden;
+        transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.35s;
+        box-shadow: -12px 0 40px rgba(0,0,0,0.45);
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+      body.nav-open .nav-links {
+        transform: translateX(0);
+        visibility: visible;
+      }
+      .nav-links li { border-bottom: 1px solid var(--border); }
+      .nav-links a {
+        display: block;
+        padding: 18px 0;
+        font-size: 13px;
+        letter-spacing: 0.14em;
+      }
+
+      .nav-cta {
+        padding: 12px 18px;
+        font-size: 10px;
+        white-space: nowrap;
+      }
+
+      .hero {
+        grid-template-columns: 1fr;
+        min-height: auto;
+      }
+      .hero-left {
+        padding: calc(100px + env(safe-area-inset-top)) 24px 40px;
+        padding-left: max(24px, env(safe-area-inset-left));
+        padding-right: max(24px, env(safe-area-inset-right));
+      }
+      .hero-title { font-size: clamp(36px, 10.5vw, 56px); }
+      .hero-subtitle { font-size: 16px; max-width: none; }
+      .hero-ctas { flex-direction: column; align-items: stretch; }
+      .btn-primary, .btn-secondary {
+        text-align: center;
+        padding: 18px 28px;
+        min-height: 48px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .hero-right {
+        min-height: 320px;
+        height: auto;
+        max-height: 56vh;
+      }
+      .hero-photo-placeholder {
+        min-height: 280px;
+        padding: 24px 16px 40px;
+      }
+      .photo-frame {
+        width: min(340px, 88vw);
+        max-width: 100%;
+        height: auto;
+        aspect-ratio: 340 / 440;
+        max-height: min(440px, 52vh);
+      }
+      .hero-profile-img {
+        min-height: 0;
+        object-position: center 18%;
+      }
+
+      .hero-right::before {
+        background: linear-gradient(to bottom, var(--dark) 0%, transparent 45%);
+      }
+
+      .hero-stats {
+        flex-wrap: wrap;
+        gap: 20px 32px;
+        margin-top: 48px;
+        padding-top: 32px;
+      }
+      .stat-num { font-size: 30px; }
+
       .about { grid-template-columns: 1fr; gap: 48px; padding: 80px 24px; }
+      .about-heading { font-size: clamp(28px, 8vw, 44px); }
+      .section-title { font-size: clamp(28px, 8vw, 42px); }
+
       .spec-grid { grid-template-columns: 1fr; }
-      .areas { grid-template-columns: 1fr; gap: 48px; padding: 80px 24px; }
-      .languages-bar { flex-wrap: wrap; gap: 32px; padding: 40px 24px; }
+      .spec-card { padding: 40px 28px; }
+      .spec-card:active { background: #212118; }
+
+      .areas {
+        grid-template-columns: 1fr;
+        gap: 48px;
+        padding: 80px 24px;
+      }
+      .area-name { font-size: 22px; }
+
+      .languages-bar {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 28px 40px;
+        padding: 40px 24px;
+      }
       .lang-sep { display: none; }
-      .contact { padding: 80px 24px; }
-      .form-row { grid-template-columns: 1fr; }
+
       .specialties { padding: 80px 24px; }
-      footer { flex-direction: column; gap: 12px; text-align: center; padding: 24px; }
-      .hero-stats { gap: 28px; }
+      .section-header { margin-bottom: 48px; }
+
+      .contact {
+        padding: 80px 20px;
+        padding-left: max(20px, env(safe-area-inset-left));
+        padding-right: max(20px, env(safe-area-inset-right));
+        padding-bottom: max(80px, env(safe-area-inset-bottom));
+      }
+      .contact::before {
+        font-size: clamp(72px, 26vw, 200px);
+      }
+      .contact-sub { margin-bottom: 48px; }
+
+      .form-group input,
+      .form-group textarea {
+        font-size: 16px;
+        padding: 18px 20px;
+      }
+      .form-submit {
+        min-height: 52px;
+        padding: 18px 20px;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      .contact-info {
+        gap: 32px 40px;
+        margin-top: 48px;
+        flex-direction: column;
+      }
+      .info-value { word-break: break-word; }
+
+      .form-row { grid-template-columns: 1fr; }
+
+      footer {
+        flex-direction: column;
+        gap: 16px;
+        text-align: center;
+        padding: 28px 24px;
+        padding-bottom: max(28px, env(safe-area-inset-bottom));
+      }
     }
   </style>
 </head>
 <body>
 
   <!-- NAV -->
-  <nav>
+  <nav aria-label="Primary">
     <a href="#" class="nav-logo">PARSA HAZEGH</a>
-    <ul class="nav-links">
+    <ul class="nav-links" id="nav-menu">
       <li><a href="#about">About</a></li>
       <li><a href="#specialties">Services</a></li>
       <li><a href="#areas">Areas</a></li>
       <li><a href="#contact">Contact</a></li>
     </ul>
     <a href="#contact" class="nav-cta">Get in Touch</a>
+    <button type="button" class="nav-toggle" id="nav-toggle" aria-expanded="false" aria-controls="nav-menu" aria-label="Open menu">
+      <span class="nav-toggle-bar" aria-hidden="true">
+        <span></span><span></span><span></span>
+      </span>
+    </button>
   </nav>
+  <div class="nav-backdrop" id="nav-backdrop" aria-hidden="true"></div>
 
   <!-- HERO -->
   <section class="hero">
@@ -658,6 +897,39 @@
     }, { threshold: 0.12 });
 
     document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+    // Mobile navigation
+    (function () {
+      const toggle = document.getElementById('nav-toggle');
+      const backdrop = document.getElementById('nav-backdrop');
+      const menu = document.getElementById('nav-menu');
+      if (!toggle || !backdrop || !menu) return;
+
+      function setNavOpen(open) {
+        document.body.classList.toggle('nav-open', open);
+        toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+        toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+        backdrop.setAttribute('aria-hidden', open ? 'false' : 'true');
+      }
+
+      toggle.addEventListener('click', function () {
+        setNavOpen(!document.body.classList.contains('nav-open'));
+      });
+      backdrop.addEventListener('click', function () {
+        setNavOpen(false);
+      });
+      menu.querySelectorAll('a').forEach(function (link) {
+        link.addEventListener('click', function () {
+          setNavOpen(false);
+        });
+      });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') setNavOpen(false);
+      });
+      window.addEventListener('resize', function () {
+        if (window.matchMedia('(min-width: 901px)').matches) setNavOpen(false);
+      });
+    })();
 
     // Form submit
     function handleSubmit(e) {
